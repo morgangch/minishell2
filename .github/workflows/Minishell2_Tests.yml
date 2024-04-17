@@ -13,7 +13,7 @@ env:
 
 jobs:
   check_coding_style:
-    if: ${{ github.repository == $REPONAME }}
+    if: ${{ github.repository == env.REPONAME }}
     name: "Use coding_style_checker"
     runs-on: ubuntu-latest
     container: ghcr.io/epitech/coding-style-checker:latest
@@ -35,7 +35,7 @@ jobs:
           fi
   
   check_repo:
-    if: ${{ github.repository == $REPONAME }}
+    if: ${{ github.repository == env.REPONAME }}
     name: "Checks if the repository is clean and void of any unwanted files (temp files, binary files, etc.)"
     runs-on: ubuntu-latest
     steps:
