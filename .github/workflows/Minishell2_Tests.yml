@@ -35,7 +35,7 @@ jobs:
           fi
   
   check_repo:
-    if: ${{ github.repository == env.REPONAME }}
+    if: github.repository == env.REPONAME
     name: "Checks if the repository is clean and void of any unwanted files (temp files, binary files, etc.)"
     runs-on: ubuntu-latest
     steps:
