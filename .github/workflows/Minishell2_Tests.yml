@@ -8,12 +8,9 @@ on:
     branches-ignore:
       - 'ga-ignore-*'
 
-env:
-  REPONAME: 'morgangch/minishell2'
-
 jobs:
   check_coding_style:
-    if: $ {{ github.repository == 'morgangch/minishell2' }}
+    if: ${{ github.repository == 'morgangch/minishell2' }}
     name: "Use coding_style_checker"
     runs-on: ubuntu-latest
     container: ghcr.io/epitech/coding-style-checker:latest
@@ -35,7 +32,7 @@ jobs:
           fi
   
   check_repo:
-    if: $ {{ github.repository == 'morgangch/minishell2' }}
+    if: ${{ github.repository == 'morgangch/minishell2' }}
     name: "Checks if the repository is clean and void of any unwanted files (temp files, binary files, etc.)"
     runs-on: ubuntu-latest
     steps:
