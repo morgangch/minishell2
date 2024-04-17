@@ -38,6 +38,7 @@ typedef struct cmd {
     int is_redir1;
     int is_redir2;
     int is_pipe;
+    struct cmd *next;
     struct cmd *pipe;
     struct cmd *redir;
     char **args;

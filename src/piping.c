@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
+/*
 void split_commands(char *input, cmd_t *cmd)
 {
     cmd_t *cmd_buff = cmd;
@@ -72,3 +73,4 @@ int main(void)
     pipe_handling(config, cmd);
     return 0;
 }
+*/
