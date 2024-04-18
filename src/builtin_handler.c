@@ -7,37 +7,60 @@
 
 #include "my.h"
 
-/*static char *handle_exception(char *argv, config_t *config)
+static char *realloc_str(char *str, char *argv)
+{
+    char *new = malloc(sizeof(char) *
+    (my_strlen(str) + my_strlen(argv) + 1));
+
+    new = my_strcpy(new, str);
+    new = my_strcat(new, argv);
+    new[my_strlen(str) + my_strlen(argv)] = '\0';
+    return new;
+}
+
+static char *handle_exception(char *argv, config_t *config)
 {
     char *new = NULL;
-    char *home = get_value_from_env(config->env, "HOME");
-    char *old = NULL;
-    old = my_strcpy(old, get_value_from_env(config->env, "OLDPWD"));
+    char *home = malloc(sizeof(char) *
+    my_strlen(get_value_from_env(config->env, "HOME")) + 1);
+    char *old = malloc(sizeof(char) *
+    my_strlen(get_value_from_env(config->env, "OLDPWD")) + 1);
 
+    home = my_strcpy(home, get_value_from_env(config->env, "HOME"));
+    old = my_strcpy(old, get_value_from_env(config->env, "OLDPWD"));
     if (argv[0] == '~') {
-        new = malloc(sizeof(char) * (my_strlen(home) + my_strlen(argv) + 1));
-        new = my_strcpy(new, home);
-        if (argv[1] != '\0') {
-            new = my_strcat(new, argv + 1);
-            new[my_strlen(home) + my_strlen(argv) + 1] = '\0';
-        } else
-            new[my_strlen(home) + 1] = '\0';
-        return new;
+        new = realloc_str(home, argv + 1);
+    } else if (argv[0] == '-') {
+        new = realloc_str(old, argv + 1);
+    } else {
+        new = malloc(sizeof(char) * my_strlen(argv) + 1);
+        new = my_strcpy(new, argv);
     }
-    if (argv[0] == '-' && argv[1] == '\0') {
-        return old;
-    }
-    return argv;
-}*/
+    return new;
+}
 
 void cd_builtin(char **args, config_t *config)
 {
-    if (args[1] == NULL)
-        my_put_err("cd: missing argument\n");
-    else {
-        if (chdir(args[1]) == -1)
-            perror("cd");
+    char *new = NULL;
+    char *old = malloc(sizeof(char) *
+    my_strlen(get_value_from_env(config->env, "PWD")) + 1);
+
+    old = my_strcpy(old, get_value_from_env(config->env, "PWD"));
+    if (args[1] == NULL) {
+        new = realloc_str(get_value_from_env(config->env, "HOME"), "");
+    } else
+        new = handle_exception(args[1], config);
+    if (new == NULL)
+        return;
+    if (chdir(new) == -1) {
+        perror("cd");
+        free(new);
+        return;
     }
+    config->env = add_at_back(config->env, old, "OLDPWD");
+    config->env = add_at_back(config->env, new, "PWD");
+    cpy_list_to_envp(config->env, config->envp);
+    free(new);
 }
 
 static my_env_t *setenv_builtin2(char **args, my_env_t *env)
