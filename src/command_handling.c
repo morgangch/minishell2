@@ -116,7 +116,8 @@ static void init_cmd(cmd_t *cmd, char *input, char *token)
 
 void parse_command(config_t *config)
 {
-    char *token = strtok(config->input, " ");
+    char *input = my_strdup(config->input);
+    char *token = strtok(input, " ");
     cmd_t *cmd = malloc(sizeof(cmd_t));
     cmd_t *temp = NULL;
 
