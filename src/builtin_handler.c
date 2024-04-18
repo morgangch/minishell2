@@ -13,41 +13,55 @@ static char *realloc_str(char *str, char *argv)
     (my_strlen(str) + my_strlen(argv) + 1));
 
     new = my_strcpy(new, str);
-    new = my_strcat(new, argv);
+    if (argv[0] != '\0')
+        new = my_strcat(new, argv);
     new[my_strlen(str) + my_strlen(argv)] = '\0';
     return new;
+}
+
+int handle_error(char *home, char *old, char c)
+{
+    if (c == '~' && home == NULL) {
+        my_put_err("cd: No home directory.\n");
+        return 1;
+    }
+    if (c == '-' && old == NULL) {
+        my_put_err("cd: No previous directory.\n");
+        return 1;
+    }
+    return 0;
 }
 
 static char *handle_exception(char *argv, config_t *config)
 {
     char *new = NULL;
-    char *home = malloc(sizeof(char) *
-    my_strlen(get_value_from_env(config->env, "HOME")) + 1);
-    char *old = malloc(sizeof(char) *
-    my_strlen(get_value_from_env(config->env, "OLDPWD")) + 1);
+    char *home = NULL;
+    char *old = NULL;
 
-    home = my_strcpy(home, get_value_from_env(config->env, "HOME"));
-    old = my_strcpy(old, get_value_from_env(config->env, "OLDPWD"));
-    if (argv[0] == '~') {
+    if (get_value_from_env(config->env, "OLDPWD") != NULL)
+        old = my_strdup(get_value_from_env(config->env, "OLDPWD"));
+    if (get_value_from_env(config->env, "HOME") != NULL)
+        home = my_strdup(get_value_from_env(config->env, "HOME"));
+    if (handle_error(home, old, argv[0]) == 1)
+        return new;
+    if (argv[0] == '~')
         new = realloc_str(home, argv + 1);
-    } else if (argv[0] == '-') {
+    else if (argv[0] == '-')
         new = realloc_str(old, argv + 1);
-    } else {
-        new = malloc(sizeof(char) * my_strlen(argv) + 1);
-        new = my_strcpy(new, argv);
-    }
+    else
+        new = my_strdup(argv);
     return new;
 }
 
 void cd_builtin(char **args, config_t *config)
 {
     char *new = NULL;
-    char *old = malloc(sizeof(char) *
-    my_strlen(get_value_from_env(config->env, "PWD")) + 1);
+    char *old = my_strdup(get_value_from_env(config->env, "PWD"));
 
-    old = my_strcpy(old, get_value_from_env(config->env, "PWD"));
     if (args[1] == NULL) {
-        new = realloc_str(get_value_from_env(config->env, "HOME"), "");
+        if (get_value_from_env(config->env, "HOME") == NULL)
+            return my_put_err("cd: No home directory.\n");
+        new = my_strdup(get_value_from_env(config->env, "HOME"));
     } else
         new = handle_exception(args[1], config);
     if (new == NULL)
@@ -57,9 +71,8 @@ void cd_builtin(char **args, config_t *config)
         free(new);
         return;
     }
-    config->env = add_at_back(config->env, old, "OLDPWD");
-    config->env = add_at_back(config->env, new, "PWD");
-    cpy_list_to_envp(config->env, config->envp);
+    setenv_builtin((char *[]){"setenv", "OLDPWD", old, NULL}, config);
+    setenv_builtin((char *[]){"setenv", "PWD", new, NULL}, config);
     free(new);
 }
 

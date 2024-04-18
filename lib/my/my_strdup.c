@@ -9,8 +9,13 @@
 
 char *my_strdup(const char *src)
 {
-    char *dupe = malloc((my_strlen(src) + 1) * sizeof(char));
+    char *dest = malloc(sizeof(char) * (my_strlen(src) + 1));
+    int i = 0;
 
-    my_strcpy(dupe, src);
-    return dupe;
+    if (dest == NULL || src == NULL)
+        return NULL;
+    for (; src[i] != '\0'; i++)
+        dest[i] = src[i];
+    dest[i] = '\0';
+    return dest;
 }
