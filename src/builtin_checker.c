@@ -25,9 +25,6 @@ static int is_in_list(char c)
 int is_valid(char const *str)
 {
     int validChar = 0;
-    int good[2] = {'a', 'z'};
-    int good2[2] = {'A', 'Z'};
-    int good3[2] = {'_', '_'};
     char c = 0;
 
     for (int i = 0; str[i] != '\0'; i++) {
