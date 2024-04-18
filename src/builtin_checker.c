@@ -7,9 +7,17 @@
 
 #include "my.h"
 
-static int is_in_list(char c, int const good[2])
+static int is_in_list(char c)
 {
+    int good[2] = {'a', 'z'};
+    int good2[2] = {'A', 'Z'};
+    int good3[2] = {'_', '_'};
+
     if (c >= good[0] && c <= good[1])
+        return 1;
+    if (c >= good2[0] && c <= good2[1])
+        return 1;
+    if (c >= good3[0] && c <= good3[1])
         return 1;
     return 0;
 }
@@ -20,9 +28,11 @@ int is_valid(char const *str)
     int good[2] = {'a', 'z'};
     int good2[2] = {'A', 'Z'};
     int good3[2] = {'_', '_'};
+    char c = 0;
 
     for (int i = 0; str[i] != '\0'; i++) {
-        validChar = is_in_list(str[i], good) + is_in_list(str[i], good2) + is_in_list(str[i], good3);
+        c = str[i];
+        validChar = is_in_list(c);
         if (!validChar)
             return 0;
     }
