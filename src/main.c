@@ -46,6 +46,8 @@ int minishell_loop(config_t *config)
             end_program(0, config);
         if (read_result == 0 || my_strcmp(config->input, "exit") == 0)
             end_program(0, config);
+        if (my_strlen(config->input) <= 1)
+            continue;
         config->input[my_strcspn(config->input, "\n")] = '\0';
         parse_command(config);
         minishell_loop_part(config);
