@@ -7,10 +7,8 @@
 
 #include "my.h"
 
-static int is_in_list(char c)
+static int is_in_list(char c, char const *good)
 {
-    char const *good = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_";
-
     for (int j = 0; good[j] != '\0'; j++) {
         if (c == good[j]) {
             return 1;
@@ -22,9 +20,13 @@ static int is_in_list(char c)
 int is_valid(char const *str)
 {
     int validChar = 0;
+    char const *good = "123456789_";
+    char const *good2 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
+    if (is_in_list(str[0], good) && !is_in_list(str[0], good2))
+        return 0;
     for (int i = 0; str[i] != '\0'; i++) {
-        validChar = is_in_list(str[i]);
+        validChar = is_in_list(str[i], good) + is_in_list(str[i], good2);
         if (!validChar)
             return 0;
     }

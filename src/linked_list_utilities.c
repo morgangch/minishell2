@@ -77,7 +77,7 @@ my_env_t *node_del_by_value(my_env_t *head, char *value)
         } else
             break;
     }
-    if (buff != NULL) {
+    if (buff != NULL && my_strcmp(buff->name, value) == 0) {
         if (prev == NULL)
             head = buff->next;
         else
