@@ -65,7 +65,7 @@ void setenv_builtin(char **args, config_t *config)
     } else if (args[1] == NULL)
         env_builtin(config->env);
     else
-        my_put_err("setenv: Variable have to contain alphanumeric chars.\n");
+        my_put_err("setenv: Variable name must contain alphanumeric characters.\n");
 }
 
 void unsetenv_builtin(char **args, config_t *config)
