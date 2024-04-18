@@ -7,26 +7,22 @@
 
 #include "my.h"
 
-static int is_in_list(char c, char const *good)
+static int is_in_list(char c, int const good[2])
 {
-    for (int j = 0; good[j] != '\0'; j++) {
-        if (c == good[j]) {
-            return 1;
-        }
-    }
+    if (c >= good[0] && c <= good[1])
+        return 1;
     return 0;
 }
 
 int is_valid(char const *str)
 {
     int validChar = 0;
-    char const *good = "123456789_";
-    char const *good2 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    int good[2] = {'a', 'z'};
+    int good2[2] = {'A', 'Z'};
+    int good3[2] = {'_', '_'};
 
-    if (is_in_list(str[0], good) && !is_in_list(str[0], good2))
-        return 0;
     for (int i = 0; str[i] != '\0'; i++) {
-        validChar = is_in_list(str[i], good) + is_in_list(str[i], good2);
+        validChar = is_in_list(str[i], good) + is_in_list(str[i], good2) + is_in_list(str[i], good3);
         if (!validChar)
             return 0;
     }
