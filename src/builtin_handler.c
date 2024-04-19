@@ -84,7 +84,6 @@ void cd_builtin(char **args, config_t *config)
         return cd_error(new);
     setenv_builtin((char *[]){"setenv", "OLDPWD", old, NULL}, config);
     setenv_builtin((char *[]){"setenv", "PWD", new, NULL}, config);
-    free(new);
 }
 
 static my_env_t *setenv_builtin2(char **args, my_env_t *env)
