@@ -53,6 +53,20 @@ static char *handle_exception(char *argv, config_t *config)
     return new;
 }
 
+static void cd_error(char *new)
+{
+    char *error = NULL;
+
+    error = my_strdup(strerror(errno));
+    error[my_strlen(error)] = '\0';
+    error = my_strcat(error, ".\n");
+    my_put_err(new);
+    write(2, ": ", 2);
+    my_put_err(error);
+    free(error);
+    free(new);
+}
+
 void cd_builtin(char **args, config_t *config)
 {
     char *new = NULL;
@@ -66,11 +80,8 @@ void cd_builtin(char **args, config_t *config)
         new = handle_exception(args[1], config);
     if (new == NULL)
         return;
-    if (chdir(new) == -1) {
-        perror("cd");
-        free(new);
-        return;
-    }
+    if (chdir(new) == -1)
+        return cd_error(new);
     setenv_builtin((char *[]){"setenv", "OLDPWD", old, NULL}, config);
     setenv_builtin((char *[]){"setenv", "PWD", new, NULL}, config);
     free(new);
