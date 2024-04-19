@@ -70,7 +70,7 @@ static void cd_error(char *new)
 void cd_builtin(char **args, config_t *config)
 {
     char *new = NULL;
-    char *old = my_strdup(get_value_from_env(config->env, "PWD"));
+    char *old = my_strdup(getcwd(NULL, 0));
 
     if (args[1] == NULL) {
         if (get_value_from_env(config->env, "HOME") == NULL)
