@@ -73,24 +73,20 @@ int check_path(cmd_t *cmd, my_env_t *env, char **envp)
     return 1;
 }
 
-void handle_dumps(pid_t pid)
+void handle_dumps(int status)
 {
-    int status;
-
-    waitpid(pid, &status, 0);
-    if (status == 256) {
-        my_put_err("Segmentation fault\n");
-        return;
-    }
-    if (WIFSIGNALED(status)) {
+    if (WIFSIGNALED(status) && WTERMSIG(status) == SIGSEGV) {
+        my_put_err("Segmentation fault");
         if (WCOREDUMP(status))
-            my_put_err("Segmentation fault (core dumped)\n");
+            my_put_err(" (core dumped)");
+        my_put_err("\n");
     }
 }
 
 int execute_command(cmd_t *cmd, config_t *config)
 {
     pid_t pid = fork();
+    int status = 0;
 
     if (pid == -1) {
         my_put_err("Fork failed.\n");
@@ -101,7 +97,8 @@ int execute_command(cmd_t *cmd, config_t *config)
             return 1;
         }
     } else {
-        handle_dumps(pid);
+        waitpid(pid, &status, 0);
+        handle_dumps(status);
     }
     return 0;
 }
