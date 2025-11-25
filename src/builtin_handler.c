@@ -74,7 +74,7 @@ void cd_builtin(char **args, config_t *config)
 
     if (args[1] == NULL) {
         if (get_value_from_env(config->env, "HOME") == NULL)
-            return my_put_err("cd: No home directory.\n");
+            my_put_err("cd: No home directory.\n");
         new = my_strdup(get_value_from_env(config->env, "HOME"));
     } else
         new = handle_exception(args[1], config);
